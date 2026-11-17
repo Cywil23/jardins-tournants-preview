@@ -225,6 +225,13 @@ figcaption {
 .bouton:hover { background: var(--encre); }
 .bouton--creux { background: transparent; color: var(--encre); border: 2px solid var(--encre); }
 .bouton--creux:hover { background: var(--encre); color: #fff; }
+.dates a { display: block; text-decoration: none; }
+.dates a time { text-decoration: underline; text-decoration-color: var(--paille); text-decoration-thickness: 2px; text-underline-offset: 0.2em; }
+.dates a:hover time { text-decoration-color: var(--vert); }
+.repli { margin-top: 1.25rem; border-top: 1px solid var(--papier-ombre); padding-top: 1rem; }
+.repli summary { cursor: pointer; font-weight: 600; }
+.repli p { margin: 0.75rem 0 0; font-size: 0.95rem; }
+.adresse-flux code { display: block; background: var(--papier-ombre); padding: 0.6rem 0.75rem; border-radius: 4px; font-size: 0.85rem; word-break: break-all; }
 
 /* Contact */
 

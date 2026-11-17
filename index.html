@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>Jardins tournants - jardiner ensemble, d'un jardin à l'autre</title>
 <meta name="description" content="Un groupe de jardiniers du centre-ouest de la Haute-Loire qui se déplace d'un jardin à l'autre, pour travailler ensemble et apprendre les uns des autres.">
 <link rel="preload" href="polices/vollkorn-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -14,6 +15,7 @@
 <header class="enveloppe barre">
   <a class="barre__nom" href="index.html">Jardins tournants</a>
   <nav class="barre__liens">
+    <a href="#sorties">Prochaines sorties</a>
     <a href="#venir">Venir avec nous</a>
     <a href="#ecrire">Nous écrire</a>
   </nav>
@@ -31,6 +33,23 @@
     <img src="photos/bandeau.jpg" srcset="photos/bandeau-900.jpg 900w, photos/bandeau.jpg 2000w" sizes="100vw" width="2000" height="959" alt="Quatre personnes étalent de la paille et du compost sur des buttes de culture, devant des montagnes boisées.">
     <figcaption class="enveloppe">Printemps 2026</figcaption>
   </figure>
+
+  <section class="enveloppe section" id="sorties">
+    <h2>Prochaines sorties</h2>
+    <div class="agenda">
+      <div id="dates-mobilizon"></div>
+      <p>Chaque sortie a sa page, où l'on trouve le détail et le bouton Participer. Si vous préférez, écrivez-nous et on vous inscrit.</p>
+      <div class="boutons">
+        <a class="bouton" href="https://mobilizon.fr/@jardins_tournants">Voir l'agenda</a>
+      </div>
+      <details class="repli">
+        <summary>Recevoir les sorties dans mon agenda</summary>
+        <p>Vous pouvez afficher nos sorties directement dans l'agenda de votre téléphone ou de votre ordinateur. Les nouvelles dates s'y ajouteront ensuite toutes seules.</p>
+        <p>Dans votre application d'agenda, cherchez "Ajouter un calendrier par URL", "S'abonner à un calendrier" ou "Calendrier en ligne", puis collez cette adresse :</p>
+        <p class="adresse-flux"><code>https://mobilizon.fr/@jardins_tournants/feed/ics</code></p>
+      </details>
+    </div>
+  </section>
 
   <section class="enveloppe section" id="principe">
     <h2>Le principe</h2>
@@ -93,18 +112,6 @@
       </li>
     </ul>
     <p>Comment ça se passe : écrivez-nous. Si une sortie est prévue et qu'il reste de la place, vous êtes invité à venir. On fait connaissance sur place, et on voit ensuite pour la suite. Le nombre de places est limité à chaque sortie, puisque c'est celui qui reçoit qui accueille tout le monde.</p>
-  </section>
-
-  <section class="enveloppe section" id="sorties">
-    <h2>Prochaines sorties</h2>
-    <div class="agenda">
-      <div id="dates-mobilizon"></div>
-      <p>Les sorties sont annoncées sur notre agenda public. Vous pouvez le consulter, vous y abonner, ou nous écrire si vous préférez être prévenu par mail.</p>
-      <div class="boutons">
-        <a class="bouton" href="https://mobilizon.fr/@jardins_tournants">Voir l'agenda</a>
-        <a class="bouton bouton--creux" href="https://mobilizon.fr/@jardins_tournants/feed/ics">S'abonner au calendrier</a>
-      </div>
-    </div>
   </section>
 
   <div class="enveloppe">
@@ -179,6 +186,7 @@
       var debut = bloc.match(/^DTSTART[^:\r\n]*:(.+)$/m);
       var titre = bloc.match(/^SUMMARY[^:\r\n]*:(.+)$/m);
       var lieu = bloc.match(/^LOCATION[^:\r\n]*:(.+)$/m);
+      var lien = bloc.match(/^URL[^:\r\n]*:(.+)$/m);
       if (!debut) { return; }
       var d = enDate(debut[1].trim());
       if (!d) { return; }
@@ -186,7 +194,8 @@
         quand: d.date,
         journee: d.journee,
         titre: titre ? decoder(titre[1]) : 'Sortie',
-        lieu: lieu ? decoder(lieu[1]) : ''
+        lieu: lieu ? decoder(lieu[1]) : '',
+        lien: lien ? decoder(lien[1]) : ''
       });
     });
     return sortie;
@@ -219,13 +228,20 @@
       ul.className = 'dates';
       liste.forEach(function (e) {
         var li = document.createElement('li');
+        var cible = li;
+        if (e.lien && e.lien.indexOf('https://') === 0) {
+          var a = document.createElement('a');
+          a.href = e.lien;
+          li.appendChild(a);
+          cible = a;
+        }
         var t = document.createElement('time');
         t.setAttribute('datetime', e.quand.toISOString());
         t.textContent = formater(e);
-        li.appendChild(t);
+        cible.appendChild(t);
         var s = document.createElement('span');
         s.textContent = e.lieu ? e.titre + ', ' + e.lieu : e.titre;
-        li.appendChild(s);
+        cible.appendChild(s);
         ul.appendChild(li);
       });
       zone.appendChild(ul);
